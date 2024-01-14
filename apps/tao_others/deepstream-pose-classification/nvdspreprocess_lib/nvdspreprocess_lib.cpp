@@ -222,6 +222,17 @@ CreateObjectCtx(CustomCtx *ctx)
   return pSObjectCtx;
 }
 
+/**
+ * @brief Resets the state of an object context within the CustomCtx.
+ *
+ * This function resets the specified SObjectContex by setting its object_id to
+ * UNTRACKED_OBJECT_ID, clearing the keypoint arrays ('x', 'y', 'z'), resetting
+ * frameIndex to 0, and timestamp (tv_sec) to 0. It ensures that the provided
+ * object context pointer is not NULL before performing the reset.
+ *
+ * @param ctx A pointer to the CustomCtx structure containing the object context.
+ * @param pSObjectCtx A pointer to the SObjectContex structure to be reset.
+ */
 void ResetObjectCtx(CustomCtx *ctx, SObjectContex *pSObjectCtx)
 {
   // Check if the pointer to the object context is not NULL
@@ -247,15 +258,14 @@ void ResetObjectCtx(CustomCtx *ctx, SObjectContex *pSObjectCtx)
 }
 
 /**
- * @brief Resets the state of an object context within the CustomCtx.
+ * @brief Loop through object contexts in the custom context and reset those that exceed the timeout.
  *
- * This function resets the specified SObjectContex by setting its object_id to
- * UNTRACKED_OBJECT_ID, clearing the keypoint arrays ('x', 'y', 'z'), resetting
- * frameIndex to 0, and timestamp (tv_sec) to 0. It ensures that the provided
- * object context pointer is not NULL before performing the reset.
+ * Acquires a unique lock on the mutex associated with the custom context to ensure thread safety.
+ * Iterates through the vector of object contexts, checks the timestamp of each tracked object, and
+ * resets the object context if it exceeds the timeout threshold. Uses gettimeofday to obtain the
+ * current time.
  *
- * @param ctx A pointer to the CustomCtx structure containing the object context.
- * @param pSObjectCtx A pointer to the SObjectContex structure to be reset.
+ * @param ctx A pointer to the CustomCtx structure containing object contexts.
  */
 void LoopObjectCtx(CustomCtx *ctx)
 {
